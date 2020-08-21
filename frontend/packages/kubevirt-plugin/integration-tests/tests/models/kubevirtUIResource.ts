@@ -103,6 +103,7 @@ export class KubevirtUIResource extends UIResource {
 
   async getAttachedDisks(): Promise<StorageResource[]> {
     await this.navigateToTab(TAB.Disks);
+    await isLoaded();
     const rows = await kubevirtDetailView.tableRows();
     return rows.map((line) => {
       const cols = line.split(/\t/);
@@ -132,35 +133,43 @@ export class KubevirtUIResource extends UIResource {
 
   async addDisk(disk: StorageResource) {
     await this.navigateToTab(TAB.Disks);
+    await isLoaded();
     const count = await resourceRows.count();
     await click(kubevirtDetailView.createDiskButton);
     const dialog = new DiskDialog();
     await dialog.create(disk);
+    await isLoaded();
     await browser.wait(until.and(waitForCount(resourceRows, count + 1)), PAGE_LOAD_TIMEOUT_SECS);
   }
 
   async removeDisk(name: string) {
     await this.navigateToTab(TAB.Disks);
+    await isLoaded();
     const count = await resourceRows.count();
     await kubevirtDetailView.selectKebabOption(name, 'Delete');
     await confirmAction();
+    await isLoaded();
     await browser.wait(until.and(waitForCount(resourceRows, count - 1)), PAGE_LOAD_TIMEOUT_SECS);
   }
 
   async addNIC(nic: NetworkResource) {
     await this.navigateToTab(TAB.NetworkInterfaces);
+    await isLoaded();
     const count = await resourceRows.count();
     await click(kubevirtDetailView.createNICButton);
     const dialog = new NetworkInterfaceDialog();
     await dialog.create(nic);
+    await isLoaded();
     await browser.wait(until.and(waitForCount(resourceRows, count + 1)), PAGE_LOAD_TIMEOUT_SECS);
   }
 
   async removeNIC(name: string) {
     await this.navigateToTab(TAB.NetworkInterfaces);
+    await isLoaded();
     const count = await resourceRows.count();
     await kubevirtDetailView.selectKebabOption(name, 'Delete');
     await confirmAction();
+    await isLoaded();
     await browser.wait(until.and(waitForCount(resourceRows, count - 1)), PAGE_LOAD_TIMEOUT_SECS);
   }
 

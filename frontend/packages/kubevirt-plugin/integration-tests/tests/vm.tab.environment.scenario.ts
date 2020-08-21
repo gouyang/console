@@ -58,7 +58,7 @@ describe('Test VM enviromnet tab', () => {
     expect(!!disks.find((d) => d.name.includes(serviceAccountName))).toBeTruthy();
   });
 
-  xit(
+  it(
     'BZ(1856251) ID(CNV-4185) Verify all sources are readable inside the VM',
     async () => {
       await vm.action(VM_ACTION.Start);

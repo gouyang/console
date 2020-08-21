@@ -4,6 +4,7 @@ import { getVMManifest } from './utils/mocks';
 import { VM_STATUS, VM_ACTION, PAGE_LOAD_TIMEOUT_SECS } from './utils/consts';
 import { VirtualMachine } from './models/virtualMachine';
 import { filterCount } from '../views/vms.list.view';
+import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { browser } from 'protractor';
 import { waitForFilterCount } from './utils/utils';
 
@@ -19,17 +20,20 @@ describe('Test List View Filtering', () => {
     deleteResource(testVM);
   });
 
-  xit('BZ(1843532) ID(CNV-3614) Displays correct count of Importing VMs', async () => {
+  it('ID(CNV-3614) Displays correct count of Pending VMs', async () => {
+    await vm.action(VM_ACTION.Start, false);
     await vm.navigateToListView();
-    // Create the VM after navigating to the list view because importing phase is very short
-    await browser.wait(waitForFilterCount(VM_STATUS.Importing, 1), PAGE_LOAD_TIMEOUT_SECS);
-    const importingCount = await filterCount(VM_STATUS.Importing);
-    expect(importingCount).toEqual(1);
+    await isLoaded();
+    await browser.wait(waitForFilterCount(VM_STATUS.Pending, 1), PAGE_LOAD_TIMEOUT_SECS);
+    const pendingCount = await filterCount(VM_STATUS.Pending);
+    expect(pendingCount).toEqual(1);
+    await vm.waitForStatus(VM_STATUS.Running);
   });
 
   it('ID(CNV-3615) Displays correct count of Off VMs', async () => {
-    await vm.waitForStatus(VM_STATUS.Off);
+    await vm.action(VM_ACTION.Stop);
     await vm.navigateToListView();
+    await isLoaded();
     const offCount = await filterCount(VM_STATUS.Off);
     expect(offCount).toEqual(1);
   });
@@ -37,6 +41,7 @@ describe('Test List View Filtering', () => {
   it('ID(CNV-3616) Displays correct count of Running VMs', async () => {
     await vm.action(VM_ACTION.Start);
     await vm.navigateToListView();
+    await isLoaded();
     const runningCount = await filterCount(VM_STATUS.Running);
     expect(runningCount).toEqual(1);
   });

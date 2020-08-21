@@ -19,6 +19,11 @@
       "kubevirt": [
         "integration-tests/tests/*.scenario.ts"
       ],
+      "kubevirt-sc-hpp": [
+        "integration-tests/tests/vm*.scenario.ts",
+        "integration-tests/tests/action.base.scenario.ts",
+        "integration-tests/tests/action.clone.scenario.ts"
+      ],
       "kubevirt-v2v": [
         "integration-tests/v2v/*.scenario.ts"
       ]

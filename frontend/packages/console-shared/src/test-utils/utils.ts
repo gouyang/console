@@ -46,7 +46,7 @@ export function removeLeakableResource(leakedResources: Set<string>, resource) {
 }
 
 export function createResource(resource) {
-  execSync(`echo '${JSON.stringify(resource)}' | kubectl create -f -`);
+  execSync(`echo '${JSON.stringify(resource)}' | kubectl apply -f -`);
 }
 
 export function createResources(resources) {

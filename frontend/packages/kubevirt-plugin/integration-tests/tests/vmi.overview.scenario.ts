@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded, resourceTitle } from '@console/internal-integration-tests/views/crud.view';
 import { asyncForEach, createResource, deleteResource } from '@console/shared/src/test-utils/utils';
@@ -6,7 +7,7 @@ import * as vmView from '../views/virtualMachine.view';
 import { getVMIManifest, basicVMConfig } from './utils/mocks';
 import { exposeServices } from './utils/utils';
 import { VirtualMachineInstance } from './models/virtualMachineInstance';
-import { TAB, VM_STATUS, NOT_AVAILABLE } from './utils/consts';
+import { TAB, VM_STATUS, NOT_AVAILABLE, PAGE_LOAD_TIMEOUT_SECS } from './utils/consts';
 import { NodePortService } from './utils/types';
 import { vmiDetailFlavor } from '../views/virtualMachineInstance.view';
 
@@ -97,6 +98,10 @@ describe('Test VMI Details', () => {
 
   it('ID(CNV-3704) Check VMI services', async () => {
     await asyncForEach(nodePortServices, async (srv) => {
+      await browser.wait(
+        until.presenceOf(vmView.vmDetailService(srv.exposeName)),
+        PAGE_LOAD_TIMEOUT_SECS,
+      );
       expect(await vmView.vmDetailService(srv.exposeName).getText()).toEqual(srv.exposeName);
       expect(await vmView.vmDetailService(srv.exposeName).getAttribute('href')).toContain(
         `/k8s/ns/${testName}/services/${srv.exposeName}`,

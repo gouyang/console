@@ -175,7 +175,7 @@ describe('Kubevirt create VM using wizard', () => {
           volumeMode: expectedVolumeMode,
         },
       };
-      const testVMConfig = vmConfig('test-dv', testName, {
+      const testVMConfig = vmConfig('test-dv1', testName, {
         provision: {
           method: ProvisionConfigName.URL,
           source: basicVMConfig.sourceURL,

@@ -1,6 +1,6 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import { resourceRows } from '@console/internal-integration-tests/views/crud.view';
+import { resourceRows, isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import {
   addLeakableResource,
   createResource,
@@ -10,13 +10,12 @@ import {
 } from '@console/shared/src/test-utils/utils';
 import { getVMIManifest } from './utils/mocks';
 import {
-  VM_DELETE_TIMEOUT_SECS,
+  PAGE_LOAD_TIMEOUT_SECS,
   VMI_ACTION,
   VM_IMPORT_TIMEOUT_SECS,
   VM_STATUS,
 } from './utils/consts';
 import { VirtualMachineInstance } from './models/virtualMachineInstance';
-import { BaseVirtualMachine } from './models/baseVirtualMachine';
 
 const waitForVM = async (manifest: any, status: VM_STATUS, resourcesSet: Set<string>) => {
   const vmi = new VirtualMachineInstance(manifest.metadata);
@@ -24,11 +23,6 @@ const waitForVM = async (manifest: any, status: VM_STATUS, resourcesSet: Set<str
   addLeakableResource(resourcesSet, manifest);
   await vmi.waitForStatus(status);
   return vmi;
-};
-
-const waitForVMDeleted = async (vm: BaseVirtualMachine) => {
-  await vm.navigateToListView();
-  await browser.wait(until.and(waitForCount(resourceRows, 0)), VM_DELETE_TIMEOUT_SECS);
 };
 
 describe('Test VMI actions', () => {
@@ -49,10 +43,13 @@ describe('Test VMI actions', () => {
 
     it('ID(CNV-3693) Deletes VMI', async () => {
       await vmi.navigateToListView();
+      await isLoaded();
 
       await vmi.listViewAction(VMI_ACTION.Delete, false);
       removeLeakableResource(leakedResources, testVMI);
-      await waitForVMDeleted(vmi);
+      await vmi.navigateToListView();
+      await isLoaded();
+      await browser.wait(until.and(waitForCount(resourceRows, 0)), PAGE_LOAD_TIMEOUT_SECS);
     });
   });
 
@@ -68,7 +65,8 @@ describe('Test VMI actions', () => {
     it('ID(CNV-3699) Deletes VMI', async () => {
       await vmi.action(VMI_ACTION.Delete, false);
       removeLeakableResource(leakedResources, testVMI);
-      await waitForVMDeleted(vmi);
+      await vmi.navigateToListView();
+      await browser.wait(until.and(waitForCount(resourceRows, 0)), PAGE_LOAD_TIMEOUT_SECS);
     });
   });
 });

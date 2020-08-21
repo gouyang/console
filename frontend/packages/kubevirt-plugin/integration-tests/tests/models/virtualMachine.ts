@@ -12,7 +12,7 @@ import {
   PAGE_LOAD_TIMEOUT_SECS,
 } from '../utils/consts';
 import { BaseVirtualMachine } from './baseVirtualMachine';
-import { resourceTitle } from '@console/internal-integration-tests/views/crud.view';
+import { isLoaded, resourceTitle } from '@console/internal-integration-tests/views/crud.view';
 
 const noConfirmDialogActions: VM_ACTION[] = [VM_ACTION.Start, VM_ACTION.Clone];
 
@@ -23,6 +23,7 @@ export class VirtualMachine extends BaseVirtualMachine {
 
   async action(action: VM_ACTION, waitForAction = true, timeout?: number) {
     await this.navigateToTab(TAB.Details);
+    await isLoaded();
 
     await detailViewAction(action, !noConfirmDialogActions.includes(action));
     if (waitForAction) {
@@ -32,6 +33,7 @@ export class VirtualMachine extends BaseVirtualMachine {
 
   async listViewAction(action: VM_ACTION, waitForAction = true, timeout?: number) {
     await this.navigateToListView();
+    await isLoaded();
 
     await listViewAction(this.name)(action, !noConfirmDialogActions.includes(action));
     if (waitForAction) {
