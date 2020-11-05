@@ -127,7 +127,7 @@ describe('Kubevirt create VM using wizard', () => {
           [`name.os.template.kubevirt.io/${osID}`]: OperatingSystem.WINDOWS_10,
         };
         const requiredLabels = {
-          [`workload.template.kubevirt.io/${vm.getData().workload}`]: 'true',
+          [`workload.template.kubevirt.io/${vm.getData().workload.toLowerCase()}`]: 'true',
           [`os.template.kubevirt.io/${osID}`]: 'true',
           'vm.kubevirt.io/template': `windows10-${vm
             .getData()

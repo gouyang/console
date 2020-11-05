@@ -1,5 +1,6 @@
 /* eslint-disable no-await-in-loop, no-console */
 import { browser, ExpectedConditions as until } from 'protractor';
+import { execSync } from 'child_process';
 import { cloneDeepWithEnum } from '@console/shared/src/constants/object-enum';
 import {
   waitForStringNotInElement,
@@ -15,6 +16,7 @@ import {
   UNEXPECTED_ACTION_ERROR,
   VM_BOOTUP_TIMEOUT_SECS,
   VM_MIGRATION_TIMEOUT_SECS,
+  EXPECT_LOGIN_SCRIPT_PATH,
 } from '../utils/constants/common';
 import { BaseVirtualMachine } from './baseVirtualMachine';
 import { AddDialog } from '../dialogs/schedulingDialog';
@@ -186,6 +188,8 @@ export class VirtualMachine extends BaseVirtualMachine {
         waitForStringInElement(vmView.vmDetailStatus(this.namespace, this.name), VM_STATUS.Running),
         VM_BOOTUP_TIMEOUT_SECS,
       );
+      // wait for the VM to boot up
+      execSync(`expect ${EXPECT_LOGIN_SCRIPT_PATH} ${this.name} ${this.namespace}`);
     }
   }
 }

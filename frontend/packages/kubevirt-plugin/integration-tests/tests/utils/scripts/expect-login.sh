@@ -2,7 +2,6 @@
 # usage ./expect-login.sh <vm name> <vm namespace>
 set vm_name [lindex $argv 0]
 set vm_namespace [lindex $argv 1]
-set login_prompt "*login: "
 
 spawn virtctl console $vm_name -n $vm_namespace --timeout 7
 
@@ -12,6 +11,9 @@ send "\n"
 
 set timeout 300
 
-expect $login_prompt
+expect {
+    -re " login: " {}
+    timeout { puts "timeout!"; exit 1 }
+}
 
 send \003]

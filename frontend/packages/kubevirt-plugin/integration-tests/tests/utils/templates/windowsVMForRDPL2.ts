@@ -95,7 +95,7 @@ spec:
       terminationGracePeriodSeconds: 0
       volumes:
         - containerDisk:
-            image: 'kubevirt/fedora-cloud-registry-disk-demo:latest'
+            image: 'kubevirt/fedora-cloud-container-disk-demo:latest'
           name: rootdisk
         - containerDisk:
             image: kubevirt/virtio-container-disk
