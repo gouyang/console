@@ -46,7 +46,7 @@ describe('Tests involving guest agent', () => {
     createResource(multusNAD);
 
     // for cmd-line scripts only
-    execSync(`kubectl config set-context --current --namespace=${testName}`);
+    execSync(`oc project ${testName}`);
     execSync('kubectl create -f -', {
       input: getFakeWindowsVM({
         name: VM_NAME,
@@ -67,11 +67,10 @@ describe('Tests involving guest agent', () => {
   afterAll(async () => {
     deleteResource(multusNAD);
     deleteResource(vm.asResource());
-    execSync(`kubectl config set-context --current --namespace=default`);
   });
 
   describe('Testing guest agent data', () => {
-    it('Displays guest agent data in Details tab', async () => {
+    it('ID(CNV-5318) Displays guest agent data in Details tab', async () => {
       expect(vmView.vmDetailHostname(testName, VM_NAME).getText()).toContain(VM_NAME);
       expect(vmView.vmDetailTimeZone(testName, VM_NAME).getText()).toEqual('UTC');
 
@@ -83,19 +82,15 @@ describe('Tests involving guest agent', () => {
       expect(vmView.vmDetailActiveUsersListNoUsers.getText()).toEqual('No Active Users');
     });
 
-    it('Displays guest agent data in Overview tab', async () => {
+    it('ID(CNV-5319) Displays guest agent data in Overview tab', async () => {
       await vm.navigateToOverview();
       expect(dashboardView.vmDetailsHostname.getText()).toContain(VM_NAME);
       expect(dashboardView.vmDetailsTZ.getText()).toContain('UTC');
       expect(dashboardView.vmDetailsLoggedInUsers.getText()).toEqual('No users logged in');
     });
 
-    it('Displays guest agent data in Disks tab', async () => {
+    it('ID(CNV-5320) Displays guest agent data in Disks tab', async () => {
       await vm.navigateToDisks();
-      await browser.wait(
-        until.presenceOf(disksView.fileSystemsTableHeader),
-        GUEST_AGENT_FIELD_TIMEOUT_SECS,
-      );
       expect(disksView.fileSystemsTable).toBeDefined();
     });
   });
