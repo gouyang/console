@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { browser, ExpectedConditions as until } from 'protractor';
+import { execSync } from 'child_process';
 import { isLoaded, resourceTitle } from '@console/internal-integration-tests/views/crud.view';
 import { selectDropdownOption, resolveTimeout } from '@console/shared/src/test-utils/utils';
 import { KubevirtUIResource } from './kubevirtUIResource';
@@ -9,6 +10,7 @@ import {
   UNEXPECTED_ACTION_ERROR,
   VM_ACTIONS_TIMEOUT_SECS,
   VM_STOP_TIMEOUT_SECS,
+  EXPECT_LOGIN_SCRIPT_PATH,
 } from '../utils/constants/common';
 import * as vmView from '../../views/virtualMachine.view';
 import { nameInput as cloneDialogNameInput } from '../../views/dialogs/cloneVirtualMachineDialog.view';
@@ -23,6 +25,10 @@ export class BaseVirtualMachine extends KubevirtUIResource<VMBuilderData> {
       until.textToBePresentInElement(vmView.vmDetailStatus(this.namespace, this.name), status),
       resolveTimeout(timeout, VM_BOOTUP_TIMEOUT_SECS),
     );
+    if (status === VM_STATUS.Running) {
+      // wait for the VM to boot up
+      execSync(`expect ${EXPECT_LOGIN_SCRIPT_PATH} ${this.name} ${this.namespace}`);
+    }
   }
 
   protected hasResource(resources, resource) {
