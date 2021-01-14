@@ -116,23 +116,14 @@ export const getDiskToCloneFrom = (): Disk => {
 
 export const cloudInitScript = `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nhostname: vm-${testName}`;
 
-export const defaultWizardPodNetworkingInterface = {
-  name: 'nic-0',
-  mac: '-',
-  model: NIC_MODEL.VirtIO,
-  type: NIC_TYPE.masquerade,
-  network: 'Pod Networking',
-};
-deepFreeze(defaultWizardPodNetworkingInterface);
-
-export const defaultYAMLPodNetworkingInterface = {
+export const defaultPodNetworkingInterface = {
   name: 'default',
   mac: '-',
   model: NIC_MODEL.VirtIO,
   type: NIC_TYPE.masquerade,
   network: 'Pod Networking',
 };
-deepFreeze(defaultYAMLPodNetworkingInterface);
+deepFreeze(defaultPodNetworkingInterface);
 
 export const multusNetworkInterface = {
   name: `nic1-${testName.slice(-5)}`,
@@ -175,8 +166,9 @@ export const containerRootDisk: Disk = {
 deepFreeze(containerRootDisk);
 
 export const cdGuestTools: Disk = {
-  source: DISK_SOURCE.Container,
+  source: DISK_SOURCE.EphemeralContainer,
   interface: DISK_INTERFACE.sata,
+  size: '1',
   drive: DISK_DRIVE.CDROM,
   storageClass: `${STORAGE_CLASS}`,
   sourceConfig: {

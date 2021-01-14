@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { execSync } from 'child_process';
 import { browser } from 'protractor';
 import { isLoaded } from '../../../../integration-tests/views/crud.view';
 import {
@@ -30,7 +31,7 @@ import {
   kubevirtStorage,
   getDiskToCloneFrom,
 } from './mocks/mocks';
-import { Workload, OperatingSystem } from './utils/constants/wizard';
+import { Workload, OperatingSystem, TemplateByName } from './utils/constants/wizard';
 import { vmPresets, getBasicVMBuilder } from './mocks/vmBuilderPresets';
 import { VMBuilder } from './models/vmBuilder';
 import {
@@ -44,19 +45,19 @@ import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('Kubevirt create VM using wizard', () => {
   const leakedResources = new Set<string>();
-  const testDataVolume = getTestDataVolume();
+  const dvName = `testdv-${testName}`;
+  const testDataVolume = getTestDataVolume(dvName);
   const defaultAccessMode = resolveStorageDataAttribute(kubevirtStorage, 'accessMode');
   const defaultVolumeMode = resolveStorageDataAttribute(kubevirtStorage, 'volumeMode');
 
   const VMTestCaseIDs = {
-    'ID(CNV-870)': vmPresets[ProvisionSource.CONTAINER.getValue()],
     'ID(CNV-2446)': vmPresets[ProvisionSource.DISK.getValue()],
     'ID(CNV-869)': vmPresets[ProvisionSource.URL.getValue()],
-    'ID(CNV-771)': vmPresets[ProvisionSource.PXE.getValue()],
   };
 
   beforeAll(async () => {
     createResources([testDataVolume]);
+    execSync(`oc wait -n ${testName} --for condition=Ready DataVolume ${dvName} --timeout=100s`);
   });
 
   afterAll(async () => {
@@ -77,7 +78,7 @@ describe('Kubevirt create VM using wizard', () => {
     const { provisionSource } = vm.getData();
     const specTimeout =
       provisionSource === ProvisionSource.DISK ? CLONE_VM_TIMEOUT_SECS : VM_BOOTUP_TIMEOUT_SECS;
-    it(
+    xit(
       `${id} Create VM using ${provisionSource}.`,
       async () => {
         await withResource(leakedResources, vm.asResource(), async () => {
@@ -108,7 +109,7 @@ describe('Kubevirt create VM using wizard', () => {
       const builder = new VMBuilder()
         .setNamespace(testName)
         .setProvisionSource(ProvisionSource.CONTAINER)
-        .setOS(OperatingSystem.WINDOWS_10)
+        .setSelectTemplateName(TemplateByName.WINDOWS_10)
         .setFlavor(flavorConfigs.Medium)
         .setWorkload(Workload.DESKTOP)
         .setCustomize(true)
@@ -245,7 +246,6 @@ describe('Kubevirt create VM using wizard', () => {
 
     const vm = new VMBuilder(getBasicVMBuilder())
       .setName(testName)
-      .setOS(OperatingSystem.FEDORA)
       .setProvisionSource(ProvisionSource.PXE)
       .setWorkload(Workload.DESKTOP)
       .setCustomize(true)

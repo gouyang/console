@@ -93,7 +93,6 @@ describe('Kubevirt non-admin Flow', () => {
   describe('Kubevirt non-admin PVC Flow', () => {
     const vm = new VMBuilder(getBasicVMBuilder())
       .setNamespace(testNonAdminNamespace)
-      .setOS(pvc.os)
       .setStartOnCreation(true)
       .setCustomize(true)
       .generateNameForPrefix('auto-clone-vm-with-normal-user')

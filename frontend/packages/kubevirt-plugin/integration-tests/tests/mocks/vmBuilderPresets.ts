@@ -127,6 +127,7 @@ export const vmPresets: { [k: string]: VirtualMachine } = {
   [ProvisionSource.DISK.getValue()]: new VMBuilder(getBasicVMBuilder())
     .setProvisionSource(ProvisionSource.DISK)
     .setNetworks([multusNetworkInterface])
+    .setPVCName(`testdv-${testName}`)
     .setDisks([getDiskToCloneFrom()])
     .setStartOnCreation(true)
     .build(),
