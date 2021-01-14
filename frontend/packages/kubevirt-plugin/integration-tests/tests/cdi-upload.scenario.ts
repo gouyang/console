@@ -37,7 +37,6 @@ import { PVC } from './models/pvc';
 import { VMBuilder } from './models/vmBuilder';
 import { VMTemplateBuilder } from './models/vmtemplateBuilder';
 import { getBasicVMBuilder, getBasicVMTBuilder } from './mocks/vmBuilderPresets';
-import { flavorConfigs } from './mocks/mocks';
 import { uploadOSImage } from './utils/utils';
 
 function imagePull(src, dest) {
@@ -137,46 +136,40 @@ describe('KubeVirt Auto Clone', () => {
       execSync(`rm ${FEDORA_PVC.image} ${WIN10_PVC.image}`);
     });
 
-    it(
-      'ID(CNV-5042) Create multiple VMs from the same golden os template',
-      async () => {
-        const vm1 = new VMBuilder(getBasicVMBuilder())
-          .setOS(rhel7PVC.os)
-          .generateNameForPrefix('auto-clone-vm1')
-          .setStartOnCreation(true)
-          .setCustomize(true)
-          .build();
+    it('ID(CNV-5042) Create multiple VMs from the same golden os template', async () => {
+      const vm1 = new VMBuilder(getBasicVMBuilder())
+        .setSelectTemplateName(TemplateByName.RHEL7)
+        .generateNameForPrefix('auto-clone-vm1')
+        .setStartOnCreation(false)
+        .setCustomize(true)
+        .build();
 
-        const vm2 = new VMBuilder(getBasicVMBuilder())
-          .setOS(rhel7PVC.os)
-          .generateNameForPrefix('auto-clone-vm2')
-          .setStartOnCreation(true)
-          .setCustomize(true)
-          .build();
+      const vm2 = new VMBuilder(getBasicVMBuilder())
+        .setSelectTemplateName(TemplateByName.RHEL7)
+        .generateNameForPrefix('auto-clone-vm2')
+        .setCustomize(true)
+        .build();
 
-        await withResources(
-          leakedResources,
-          [vm1.asResource(), vm2.asResource(), rhel7PVC.getDVResource()],
-          async () => {
-            await rhel7PVC.create();
-            await vm1.create();
-            await vm1.navigateToDetail();
-            await vm2.create();
-            await vm2.navigateToDetail();
-          },
-        );
-      },
-      VM_BOOTUP_TIMEOUT_SECS + CLONE_VM_TIMEOUT_SECS,
-    );
+      await withResources(
+        leakedResources,
+        [vm1.asResource(), vm2.asResource(), rhel7PVC.getDVResource()],
+        async () => {
+          await rhel7PVC.create();
+          await vm1.create();
+          await vm1.navigateToDetail();
+          await vm2.create();
+          await vm2.navigateToDetail();
+          await vm1.start();
+        },
+      );
+    }, 1200000);
 
     it(
       'ID(CNV-5041) VM can be up after deleting backend golden PVC',
       async () => {
         const fedora = new VMBuilder(getBasicVMBuilder())
-          .setOS(fedoraPVC.os)
+          .setSelectTemplateName(TemplateByName.FEDORA)
           .generateNameForPrefix('auto-clone-vm-with-pvc-deleted')
-          .setStartOnCreation(false)
-          .setCustomize(true)
           .build();
 
         await withResources(
@@ -200,11 +193,8 @@ describe('KubeVirt Auto Clone', () => {
       async () => {
         // skip creating fedora/rhel vm here as it's covered above.
         const win10 = new VMBuilder(getBasicVMBuilder())
-          .setOS(win10PVC.os)
-          .setFlavor(flavorConfigs.Medium)
+          .setSelectTemplateName(TemplateByName.WINDOWS_10)
           .generateNameForPrefix('auto-clone-win10-vm')
-          .setStartOnCreation(true)
-          .setCustomize(true)
           .build();
 
         await withResources(

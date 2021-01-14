@@ -12,6 +12,7 @@ import {
   consoleTypeSelectorId,
   serialDisconnectButton,
   serialReconnectButton,
+  serialConnectButton,
   vncSendKeyButton,
   vncConnectingBar,
   serialConsoleWrapper,
@@ -23,9 +24,10 @@ import {
 import {
   PAGE_LOAD_TIMEOUT_SECS,
   VM_BOOTUP_TIMEOUT_SECS,
+  VM_IMPORT_TIMEOUT_SECS,
   KUBEVIRT_SCRIPTS_PATH,
 } from './utils/constants/common';
-import { VM_ACTION } from './utils/constants/vm';
+import { VM_ACTION, VM_STATUS } from './utils/constants/vm';
 import { VirtualMachine } from './models/virtualMachine';
 import { getVMManifest } from './mocks/mocks';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
@@ -65,6 +67,8 @@ describe('KubeVirt VM console - VNC/Serial', () => {
 
   beforeAll(async () => {
     createResource(vmResource);
+    await testVM.navigateToDetail();
+    await testVM.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
     await testVM.detailViewAction(VM_ACTION.Start);
     await testVM.navigateToConsole();
   }, VM_BOOTUP_TIMEOUT_SECS);
@@ -91,7 +95,9 @@ describe('KubeVirt VM console - VNC/Serial', () => {
 
     // verify it's connecting to serial console in the new window.
     await selectDropdownOption(consoleTypeSelectorId, 'Serial Console');
-    await browser.wait(waitForStringNotInElement(serialConsoleWrapper, 'Loading'));
+    if (await serialConnectButton.isPresent()) {
+      await click(serialConnectButton);
+    }
     await browser.wait(until.presenceOf(serialReconnectButton), PAGE_LOAD_TIMEOUT_SECS);
     await browser.wait(until.presenceOf(serialDisconnectButton), PAGE_LOAD_TIMEOUT_SECS);
     await browser.wait(until.elementToBeClickable(serialDisconnectButton), PAGE_LOAD_TIMEOUT_SECS);

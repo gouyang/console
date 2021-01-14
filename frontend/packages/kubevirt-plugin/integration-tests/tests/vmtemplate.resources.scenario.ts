@@ -14,17 +14,20 @@ import { ProvisionSource } from './utils/constants/enums/provisionSource';
 describe('Test adding/removing discs/nics to/from a VM template', () => {
   const vmt = new VMTemplateBuilder(getBasicVMTBuilder())
     .setProvisionSource(ProvisionSource.CONTAINER)
+    .setName('test-vmt-disk-nic')
     .build();
 
   const vm = new VMBuilder(getBasicVMBuilder())
-    .setTemplate(vmt.name)
+    .setSelectTemplateName(vmt.name)
     .setName('from-template')
+    .setStartOnCreation(false)
     .build();
 
   beforeAll(async () => {
     createResource(multusNAD);
     await vmt.create();
-  }, TEMPLATE_ACTIONS_TIMEOUT_SECS);
+    await vmt.navigateToDetail();
+  });
 
   afterAll(() => {
     deleteResources([multusNAD, vmt.asResource()]);
@@ -56,6 +59,7 @@ describe('Test adding/removing discs/nics to/from a VM template', () => {
 
   describe('Test removing disks/nics from a VM template', () => {
     beforeAll(async () => {
+      await vmt.navigateToDetail();
       await vmt.removeDisk(hddDisk.name);
       await vmt.removeNIC(multusNetworkInterface.name);
       await vm.create();
