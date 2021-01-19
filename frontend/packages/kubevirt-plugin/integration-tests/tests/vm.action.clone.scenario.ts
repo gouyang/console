@@ -59,7 +59,7 @@ describe('Test clone VM.', () => {
     execSync(`kubectl delete --ignore-not-found=true namespace ${testCloningNamespace}`);
   });
 
-  xdescribe('Test Clone VM dialog validation', () => {
+  describe('Test Clone VM dialog validation', () => {
     const testContainerVM = getVMManifest(ProvisionSource.CONTAINER, testName);
     const vm = new VirtualMachine(testContainerVM.metadata);
     const testNameValidationVM = getVMManifest(
@@ -179,7 +179,7 @@ describe('Test clone VM.', () => {
       removeLeakedResources(leakedResources);
     });
 
-    xit(
+    it(
       'ID(CNV-3058) Clones VM to a different namespace',
       async () => {
         const vmClonedToOtherNS = new VirtualMachine({
