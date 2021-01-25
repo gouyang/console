@@ -70,7 +70,6 @@ describe('Tests involving guest agent', () => {
 
     // create windows VM
     // for cmd-line scripts only
-    execSync(`kubectl config set-context --current --namespace=${testName}`);
 
     execSync('kubectl create -f -', {
       input: getFakeWindowsVM({
@@ -87,7 +86,6 @@ describe('Tests involving guest agent', () => {
     deleteResource(multusNAD);
     deleteResource(vmLinux.asResource());
     deleteResource(vmWindows.asResource());
-    execSync(`kubectl config set-context --current --namespace=default`);
   });
 
   describe('Testing guest agent data', () => {

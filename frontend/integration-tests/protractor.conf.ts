@@ -19,7 +19,7 @@ export const BROWSER_NAME = process.env.BRIDGE_E2E_BROWSER_NAME || 'chrome';
 export const BROWSER_TIMEOUT = 15000;
 export const JASMSPEC_TIMEOUT = process.env.BRIDGE_JASMINE_TIMEOUT
   ? Number(process.env.BRIDGE_JASMINE_TIMEOUT)
-  : 120000;
+  : 1200000;
 export const appHost = `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9000'}${(
   process.env.BRIDGE_BASE_PATH || '/'
 ).replace(/\/$/, '')}`;
