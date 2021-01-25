@@ -27,9 +27,16 @@ export class BaseVirtualMachine extends KubevirtUIResource<VMBuilderData> {
     );
     if (status === VM_STATUS.Running) {
       execSync(
-        `oc wait --for condition=Ready vmi ${this.name} -n ${this.namespace} --timeout=${waitTimeout}s`,
+        `oc wait --for=condition=Ready vmi ${this.name} -n ${this.namespace} --timeout=${waitTimeout}s`,
       );
     }
+    /*
+    if (status === VM_STATUS.Off) {
+      execSync(
+        `oc wait --for=delete vmi ${this.name} -n ${this.namespace} --timeout=${waitTimeout}s || true`,
+      );
+    }
+   */
   }
 
   protected hasResource(resources, resource) {
