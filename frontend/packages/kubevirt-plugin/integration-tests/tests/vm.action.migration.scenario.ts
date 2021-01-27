@@ -62,7 +62,8 @@ describe('Test VM Migration', () => {
 
       await vm.detailViewAction(VM_ACTION.Migrate);
       await vm.waitForMigrationComplete(sourceNode, VM_MIGRATION_TIMEOUT_SECS);
-      expect(vm.getStatus()).toEqual(VM_STATUS.Running);
+      const vmStatus = await vm.getStatus();
+      expect(vmStatus).toEqual(VM_STATUS.Running);
     },
     VM_BOOT_AND_MIGRATE_TIMEOUT,
   );
