@@ -36,7 +36,7 @@ const {
   BRIDGE_KUBEADMIN_PASSWORD,
 } = process.env;
 
-xdescribe('Kubevirt non-admin Flow', () => {
+describe('Kubevirt non-admin Flow', () => {
   const leakedResources = new Set<string>();
   const pvc = new PVC(RHEL7_PVC);
 
