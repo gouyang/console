@@ -103,6 +103,7 @@ spec:
         - cloudInitNoCloud:
             userData: |
               #cloud-config
+              user: fedora
               password: fedora
               chpasswd: { expire: False }
               runcmd:

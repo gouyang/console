@@ -13,7 +13,7 @@ export const prefix = $('[data-test-id=env-prefix]');
 export const resources = $$('.co-resource-item__resource-name');
 const option = $$('[role="option"]');
 const dropDownBtn = $$('.value-from');
-const textFilter = $('[placeholder="ConfigMap or Secret"]');
+const textFilter = $('[placeholder="Config Map or Secret"]');
 
 export const isLoaded = () => browser.wait(until.presenceOf(inputs.first()), BROWSER_TIMEOUT);
 
