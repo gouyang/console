@@ -36,7 +36,7 @@ describe('Wizard validation', () => {
   };
 
   beforeAll(async () => {
-    execSync(`kubectl create -f ${KUBEVIRT_TEMPLATES_PATH}/validationCommonTemplate.yaml`);
+    execSync(`kubectl apply -f ${KUBEVIRT_TEMPLATES_PATH}/validationCommonTemplate.yaml`);
   });
 
   afterAll(() => {

@@ -100,7 +100,7 @@ export class Wizard {
   }
 
   async selectFlavor(flavor: FlavorConfig) {
-    await selectItemFromDropdown(view.flavorSelect, dropDownItemMain(flavor.flavor));
+    await selectItemFromDropdown(view.flavorSelect, dropDownItem(flavor.flavor));
     if (flavor.flavor === Flavor.CUSTOM && (!flavor.memory || !flavor.cpu)) {
       throw Error('Custom Flavor requires memory and cpu values.');
     }
@@ -113,7 +113,7 @@ export class Wizard {
   }
 
   async selectWorkloadProfile(workloadProfile: string) {
-    await selectItemFromDropdown(view.workloadProfileSelect, dropDownItemMain(workloadProfile));
+    await selectItemFromDropdown(view.workloadProfileSelect, dropDownItem(workloadProfile));
   }
 
   async disableGoldenImageCloneCheckbox() {

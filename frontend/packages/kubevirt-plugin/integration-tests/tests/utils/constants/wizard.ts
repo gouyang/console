@@ -20,9 +20,9 @@ export enum Flavor {
 }
 
 export enum Workload {
-  DESKTOP = 'Desktop',
-  HIGH_PERFORMANCE = 'High-performance',
-  SERVER = 'Server',
+  DESKTOP = 'desktop',
+  HIGH_PERFORMANCE = 'highperformance',
+  SERVER = 'server',
 }
 
 export enum Provider {
