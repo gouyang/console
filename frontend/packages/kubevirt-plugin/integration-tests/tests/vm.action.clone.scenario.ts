@@ -11,6 +11,7 @@ import {
 } from '@console/internal-integration-tests/views/crud.view';
 import {
   removeLeakedResources,
+  applyResource,
   waitForCount,
   withResource,
   createResources,
@@ -161,7 +162,9 @@ describe('Test clone VM.', () => {
     };
 
     beforeAll(async () => {
-      createResources([multusNAD, testVM, datavolumeClonerClusterRole, allowCloneRoleBinding]);
+      createResources([multusNAD, testVM]);
+      applyResource(datavolumeClonerClusterRole);
+      applyResource(allowCloneRoleBinding);
       await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
       await vm.addNIC(multusNetworkInterface);
       await vm.detailViewAction(VM_ACTION.Start);
