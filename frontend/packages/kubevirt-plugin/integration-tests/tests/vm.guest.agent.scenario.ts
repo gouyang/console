@@ -70,7 +70,9 @@ describe('Tests involving guest agent', () => {
   });
 
   describe('Testing guest agent data', () => {
-    it('ID(CNV-5318) Displays guest agent data in Details tab', async () => {
+    // skip this test as no good CSS ID.
+    // TODO: uncomment it when CSS ID is adding back.
+    xit('ID(CNV-5318) Displays guest agent data in Details tab', async () => {
       expect(vmView.vmDetailHostname(testName, VM_NAME).getText()).toContain(VM_NAME);
       expect(vmView.vmDetailTimeZone(testName, VM_NAME).getText()).toEqual('UTC');
 

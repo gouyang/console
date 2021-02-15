@@ -66,7 +66,7 @@ export const vmDetailHostname = (namespace, vmName) =>
 export const vmDetailTimeZone = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'timezone'));
 export const vmDetailActiveUsersListGuestAgentUnavail = () => $('#guest-agent-unavailable-msg');
-export const vmDetailActiveUsersListNoUsers = $('#no-active-users-msg');
+export const vmDetailActiveUsersListNoUsers = $$('.text-center').get(1);
 
 export const vmDetailstatusButton = (namespace, name) =>
   $(`${vmDetailItemId(namespace, name, 'vm-statuses')} > .pf-c-button.pf-m-link.pf-m-inline`);
