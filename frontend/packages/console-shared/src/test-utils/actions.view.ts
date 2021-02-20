@@ -1,10 +1,9 @@
 import { $, $$, browser, ExpectedConditions as until } from 'protractor';
 import { rowForName } from '@console/internal-integration-tests/views/crud.view';
-import { click, waitForCount } from './utils';
+import { click } from './utils';
 
 const PAGE_LOAD_TIMEOUT_SECS = 15 * 1000;
 
-const disabledDropdownButtons = $$('.pf-m-disabled');
 const listViewKebabDropdown = '[data-test-id="kebab-button"]';
 export const detailViewDropdown = '[data-test-id="actions-menu-button"]';
 export const detailViewDropdownMenu = '[data-test-id="action-items"]';
@@ -30,7 +29,8 @@ const selectDropdownItem = (getActionsDropdown) => async (action: string) => {
   await browser.wait(until.elementToBeClickable(getActionsDropdown()));
   await getActionsDropdown().click();
   await browser.wait(until.presenceOf($(detailViewDropdownMenu)));
-  await browser.wait(waitForCount(disabledDropdownButtons, 0));
+  // wait for disabled items gone
+  await browser.sleep(3000);
   await click($(`[data-test-action="${action}"]`));
 };
 

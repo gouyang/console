@@ -26,10 +26,13 @@
         "integration-tests/tests/vm.detail.*.scenario.ts"
       ],
       "kubevirt-actions": [
-        "integration-tests/tests/vm.action.*.scenario.ts"
+        "integration-tests/tests/vm.action.base.scenario.ts"
       ],
       "kubevirt-vmis": [
         "integration-tests/tests/vmi.*.scenario.ts"
+      ],
+      "kubevirt-nonadmin": [
+        "integration-tests/tests/with-non-admin.scenario.ts"
       ],
       "kubevirt-v2v": [
         "integration-tests/v2v/*.scenario.ts"
