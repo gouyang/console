@@ -1,5 +1,6 @@
 import { $, browser, ExpectedConditions as until, by, element } from 'protractor';
 import { appHost } from '../protractor.conf';
+import { closeGuidedTour } from './overview.view';
 
 export const nameInput = $('#inputUsername');
 export const passwordInput = $('#inputPassword');
@@ -26,6 +27,7 @@ export const login = async (providerName: string, username: string, password: st
   await nameInput.sendKeys(username);
   await passwordInput.sendKeys(password);
   await submitButton.click();
+  await closeGuidedTour();
   await browser.wait(until.presenceOf(userDropdown));
 };
 
