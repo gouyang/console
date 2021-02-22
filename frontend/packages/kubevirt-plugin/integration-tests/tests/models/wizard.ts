@@ -68,6 +68,7 @@ export class Wizard {
       if (customize) {
         await this.selectTemplate(template);
         await this.next();
+        // close template support dialog
         if (await modalTitle.isPresent()) {
           await click(continueButton);
         }
