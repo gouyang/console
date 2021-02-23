@@ -1,4 +1,4 @@
-import { KUBEVIRT_STORAGE_CLASS_DEFAULTS } from '../const';
+import { KUBEVIRT_STORAGE_CLASS_DEFAULTS, EXPECT_LOGIN_SCRIPT_PATH } from '../const';
 
 export * from '../../../integration-tests-cypress/support';
 
@@ -9,6 +9,8 @@ declare global {
       createResource(resource: any): void;
       createDataVolume(name: string, namespace: string): void;
       dropFile(filePath: string, fileName: string, inputSelector: string): void;
+      uploadOSImage(name: string, namespace: string, imagePath: string, size: string): void;
+      waitForLoginPrompt(vmName: string, namespace: string): void;
     }
   }
 }
@@ -60,5 +62,44 @@ Cypress.Commands.add('dropFile', (filePath, fileName, inputSelector) => {
       dataTransfer.items.add(file);
       cy.get(inputSelector).trigger('drop', { dataTransfer });
     });
+  });
+});
+
+Cypress.Commands.add(
+  'uploadOSImage',
+  (name: string, namespace: string, imagePath: string, size: string) => {
+    cy.exec(
+      `kubectl get -o json -n ${Cypress.env(
+        'KUBEVIRT_PROJECT_NAME',
+      )} configMap ${KUBEVIRT_STORAGE_CLASS_DEFAULTS}`,
+    ).then((result) => {
+      const configMap = JSON.parse(result.stdout);
+      const storageClass = Cypress.env('STORAGE_CLASS');
+      const accessMode = storageClass
+        ? [configMap.data[`${storageClass}.accessMode`]]
+        : [configMap.data.accessMode];
+      const volumeMode = storageClass
+        ? configMap.data[`${storageClass}.volumeMode`]
+        : configMap.data.volumeMode;
+      let blockVolume;
+      if (volumeMode === 'Block') {
+        blockVolume = 'true';
+      } else {
+        blockVolume = 'false';
+      }
+      cy.exec(
+        `virtctl image-upload -n ${namespace} dv ${name} --image-path=${imagePath} --size=${size}Gi --storage-class=${storageClass} --access-mode=${accessMode} --block-volume=${blockVolume} --insecure`,
+        {
+          timeout: 120000,
+        },
+      );
+    });
+  },
+);
+
+Cypress.Commands.add('waitForLoginPrompt', (vmName: string, namespace: string) => {
+  cy.exec(`expect ${EXPECT_LOGIN_SCRIPT_PATH} ${vmName} ${namespace}`, {
+    failOnNonZeroExit: false,
+    timeout: 180000,
   });
 });
