@@ -29,6 +29,8 @@ const selectDropdownItem = (getActionsDropdown) => async (action: string) => {
   await browser.wait(until.elementToBeClickable(getActionsDropdown()));
   await getActionsDropdown().click();
   await browser.wait(until.presenceOf($(detailViewDropdownMenu)));
+  // wait for disabled items gone
+  await browser.sleep(1000);
   await click($(`[data-test-action="${action}"]`));
 };
 
